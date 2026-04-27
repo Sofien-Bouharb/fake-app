@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { addTask, deleteTask, toggleTask } from "./features/tasks/tasksSlice";
 
 function App() {
+  const [input, setInput] = useState("");
+  const tasks = useSelector((state) => state.tasks);
+  const dispatch = useDispatch();
+
+  const handleAdd = () => {
+    if (input.trim() === "") return;
+    dispatch(addTask(input));
+    setInput("");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Todo List</h1>
+
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Enter task"
+      />
+      <button onClick={handleAdd}>Add</button>
+
+      <ul>
+        {tasks.map((task) => (
+          <li key={task.id}>
+            <span>
+              {task.text} ({task.completed ? "Completed" : "To Do"})
+            </span>
+
+            <button onClick={() => dispatch(toggleTask(task.id))}>
+              Change State
+            </button>
+
+            <button onClick={() => dispatch(deleteTask(task.id))}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
